@@ -3,7 +3,13 @@ import { useQuery } from "@tanstack/react-query";
 import { Stack } from "expo-router";
 import { SymbolView } from "expo-symbols";
 import React from "react";
-import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
+import {
+  ActivityIndicator,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 export default function HomePage() {
   const query = useQuery({
@@ -27,16 +33,20 @@ export default function HomePage() {
 
           headerRight: () => (
             <TouchableOpacity>
-              <SymbolView name="square.grid.2x2.fill" />
+              <SymbolView name="square.grid.2x2.fill" tintColor="black" />
             </TouchableOpacity>
           ),
         }}
       />
-      <View style={{ flex: 1 }}>
-        {query.isLoading && <ActivityIndicator />}
+      <ScrollView contentInsetAdjustmentBehavior="automatic">
+        <View style={{ flex: 1 }}>
+          {query.isLoading && <ActivityIndicator />}
 
-        {query.isSuccess && <Text>{query.data.length} books found</Text>}
-      </View>
+          {query.isError && <Text>Error: {query.error.message}</Text>}
+
+          {query.isSuccess && <Text>{query.data.length} books found</Text>}
+        </View>
+      </ScrollView>
     </>
   );
 }

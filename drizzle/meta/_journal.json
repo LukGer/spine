@@ -8,6 +8,13 @@
       "when": 1739884877247,
       "tag": "0000_neat_gateway",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1739889279663,
+      "tag": "0001_closed_risque",
+      "breakpoints": true
     }
   ]
 }

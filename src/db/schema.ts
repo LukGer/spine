@@ -1,6 +1,7 @@
+import { relations } from "drizzle-orm";
 import { int, real, sqliteTable, text } from "drizzle-orm/sqlite-core";
 
-export const bookTable = sqliteTable("books", {
+export const books = sqliteTable("books", {
   id: int().primaryKey({ autoIncrement: true }),
   title: text().notNull(),
   subtitle: text(),
@@ -12,32 +13,71 @@ export const bookTable = sqliteTable("books", {
   mainCategory: text(),
   averageRating: real(),
   thumbnailUrl: text(),
+  state: text({ enum: ["to_read", "reading", "read"] }).notNull(),
 });
 
-export const authorTable = sqliteTable("authors", {
+export const booksRelations = relations(books, ({ many }) => ({
+  authors: many(booksToAuthors),
+  categories: many(booksToCategories),
+}));
+
+export const authors = sqliteTable("authors", {
   id: int().primaryKey({ autoIncrement: true }),
   name: text().notNull(),
 });
 
-export const bookAuthorTable = sqliteTable("book_authors", {
+export const authorsRelations = relations(authors, ({ many }) => ({
+  books: many(booksToAuthors),
+}));
+
+export const booksToAuthors = sqliteTable("book_authors", {
   bookId: int()
     .notNull()
-    .references(() => bookTable.id),
+    .references(() => books.id),
   authorId: int()
     .notNull()
-    .references(() => authorTable.id),
+    .references(() => authors.id),
 });
 
-export const categoryTable = sqliteTable("categories", {
+export const booksToAuthorsRelations = relations(booksToAuthors, ({ one }) => ({
+  book: one(books, {
+    fields: [booksToAuthors.bookId],
+    references: [books.id],
+  }),
+  author: one(authors, {
+    fields: [booksToAuthors.authorId],
+    references: [authors.id],
+  }),
+}));
+
+export const categories = sqliteTable("categories", {
   id: int().primaryKey({ autoIncrement: true }),
   name: text().notNull(),
 });
 
-export const bookCategoryTable = sqliteTable("book_categories", {
+export const categoriesRelations = relations(categories, ({ many }) => ({
+  books: many(booksToCategories),
+}));
+
+export const booksToCategories = sqliteTable("book_categories", {
   bookId: int()
     .notNull()
-    .references(() => bookTable.id),
+    .references(() => books.id),
   categoryId: int()
     .notNull()
-    .references(() => categoryTable.id),
+    .references(() => categories.id),
 });
+
+export const booksToCategoriesRelations = relations(
+  booksToCategories,
+  ({ one }) => ({
+    book: one(books, {
+      fields: [booksToCategories.bookId],
+      references: [books.id],
+    }),
+    category: one(categories, {
+      fields: [booksToCategories.categoryId],
+      references: [categories.id],
+    }),
+  })
+);
