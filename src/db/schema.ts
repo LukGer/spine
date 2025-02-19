@@ -16,6 +16,8 @@ export const books = sqliteTable("books", {
   state: text({ enum: ["to_read", "reading", "read"] }).notNull(),
 });
 
+export type DbBook = typeof books.$inferSelect;
+
 export const booksRelations = relations(books, ({ many }) => ({
   authors: many(booksToAuthors),
   categories: many(booksToCategories),
@@ -25,6 +27,8 @@ export const authors = sqliteTable("authors", {
   id: int().primaryKey({ autoIncrement: true }),
   name: text().notNull(),
 });
+
+export type DbAuthor = typeof authors.$inferSelect;
 
 export const authorsRelations = relations(authors, ({ many }) => ({
   books: many(booksToAuthors),
@@ -54,6 +58,8 @@ export const categories = sqliteTable("categories", {
   id: int().primaryKey({ autoIncrement: true }),
   name: text().notNull(),
 });
+
+export type DbCategory = typeof categories.$inferSelect;
 
 export const categoriesRelations = relations(categories, ({ many }) => ({
   books: many(booksToCategories),
