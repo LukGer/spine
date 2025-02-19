@@ -3,4 +3,7 @@ module.exports = {
   extends: "expo",
   plugins: ["@tanstack/query"],
   ignorePatterns: ["/dist/*", "/node_modules/*", "/ios/*"],
+  rules: {
+    "import/no-unresolved": "off",
+  },
 };
