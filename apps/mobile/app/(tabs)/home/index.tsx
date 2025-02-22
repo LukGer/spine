@@ -1,5 +1,6 @@
 import { DbBook } from "@/src/db/schema";
 import { getBooks } from "@/src/repository/books";
+import * as AppleColors from "@bacons/apple-colors";
 import { LegendList } from "@legendapp/list";
 import { useQuery } from "@tanstack/react-query";
 import { Image } from "expo-image";
@@ -44,7 +45,7 @@ export default function HomePage() {
       />
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
-        style={{ paddingHorizontal: 26 }}
+        style={{ paddingHorizontal: 16 }}
       >
         <View style={{ flex: 1 }}>
           {query.isLoading && <ActivityIndicator />}
@@ -58,6 +59,59 @@ export default function HomePage() {
               renderItem={({ item }) => <BookListItem book={item} />}
               estimatedItemSize={220}
             />
+          )}
+
+          {query.isSuccess && query.data.length === 0 && (
+            <View
+              style={{
+                paddingHorizontal: 16,
+                alignItems: "center",
+                justifyContent: "center",
+                height: 400,
+              }}
+            >
+              <SymbolView name="tray" size={64} tintColor={AppleColors.label} />
+
+              <Text
+                style={{
+                  color: AppleColors.label,
+                  marginTop: 16,
+                }}
+              >
+                You don't have any books yet.
+              </Text>
+
+              <View
+                style={{
+                  marginTop: 8,
+                  flexDirection: "row",
+                  alignItems: "center",
+                  gap: 4,
+                }}
+              >
+                <Text
+                  style={{
+                    color: AppleColors.label,
+                  }}
+                >
+                  Add books by tapping the
+                </Text>
+
+                <SymbolView
+                  name="plus"
+                  size={16}
+                  tintColor={AppleColors.label}
+                />
+
+                <Text
+                  style={{
+                    color: AppleColors.label,
+                  }}
+                >
+                  button below.
+                </Text>
+              </View>
+            </View>
           )}
         </View>
       </ScrollView>

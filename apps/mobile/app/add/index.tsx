@@ -2,7 +2,11 @@ import { client } from "@/src/api/client";
 import * as Form from "@/src/components/ui/Form";
 import * as AppleColors from "@bacons/apple-colors";
 import { useQuery } from "@tanstack/react-query";
-import { CameraView, useCameraPermissions } from "expo-camera";
+import {
+  BarcodeScanningResult,
+  CameraView,
+  useCameraPermissions,
+} from "expo-camera";
 import { Image } from "expo-image";
 import { Stack, useNavigation } from "expo-router";
 import { SymbolView } from "expo-symbols";
@@ -10,6 +14,7 @@ import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Button,
+  Dimensions,
   Modal,
   StyleSheet,
   Text,
@@ -108,7 +113,7 @@ export default function AddPage() {
               <SymbolView
                 name="exclamationmark.triangle"
                 size={64}
-                tintColor="systemRed"
+                tintColor={AppleColors.systemRed}
               />
 
               <Text
@@ -118,6 +123,8 @@ export default function AddPage() {
               >
                 Error: {searchQuery.error.message}
               </Text>
+
+              <Button title="Retry" onPress={() => searchQuery.refetch()} />
             </View>
           )}
 
@@ -169,6 +176,13 @@ export default function AddPage() {
   );
 }
 
+const { width, height } = Dimensions.get("window");
+
+const scanAreaWidth = width * 0.8;
+const scanAreaHeight = height * 0.2;
+const scanAreaX = (width - scanAreaWidth) / 2;
+const scanAreaY = (height - scanAreaHeight) / 2;
+
 const CameraPreview = ({
   onBarcodeScanned,
   onCloseClicked,
@@ -186,6 +200,27 @@ const CameraPreview = ({
     }
   });
 
+  const handleBarcodeScanned = (result: BarcodeScanningResult) => {
+    const { bounds, data } = result;
+
+    let x = 0,
+      y = 0;
+
+    if (bounds.origin) {
+      x = bounds.origin.x;
+      y = bounds.origin.y;
+    }
+
+    if (
+      x >= scanAreaX &&
+      x <= scanAreaX + scanAreaWidth &&
+      y >= scanAreaY &&
+      y <= scanAreaY + scanAreaHeight
+    ) {
+      onBarcodeScanned(data);
+    }
+  };
+
   if (!permissions || !permissions.granted) {
     return (
       <View>
@@ -199,9 +234,11 @@ const CameraPreview = ({
       <CameraView
         style={styles.camera}
         facing="back"
-        onBarcodeScanned={(result) => onBarcodeScanned(result.data)}
+        onBarcodeScanned={handleBarcodeScanned}
         enableTorch={useFlash}
       >
+        <View style={styles.hole} />
+
         <TouchableOpacity
           style={[
             styles.closeButton,
@@ -255,5 +292,22 @@ const styles = StyleSheet.create({
     padding: 8,
     backgroundColor: "rgba(0,0,0,0.5)",
     borderRadius: 8,
+  },
+
+  hole: {
+    position: "absolute",
+    top: scanAreaY,
+    left: scanAreaX,
+    width: scanAreaWidth,
+    height: scanAreaHeight,
+    backgroundColor: "transparent",
+    borderRadius: 10,
+    borderWidth: 2,
+    borderColor: "white",
+  },
+  // The overlay darkens the camera view. It is only visible where the mask is opaque.
+  overlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.7)",
   },
 });

@@ -6,7 +6,7 @@
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "myapp",
-    "userInterfaceStyle": "automatic",
+    "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
@@ -39,6 +39,7 @@
         }
       ],
       "expo-sqlite",
+      "@bacons/apple-colors",
       [
         "expo-camera",
         {

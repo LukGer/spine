@@ -1,27 +1,30 @@
 import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
-import { Tabs } from "expo-router";
+import { Stack, Tabs } from "expo-router";
 import { SymbolView } from "expo-symbols";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 
 export default function TabsLayout() {
   return (
-    <Tabs tabBar={TabBar} screenOptions={{ headerShown: false }}>
-      <Tabs.Screen
-        name="home"
-        options={{
-          title: "Home",
-          tabBarIcon: () => <SymbolView name="house" />,
-        }}
-      />
-      <Tabs.Screen
-        name="profile"
-        options={{
-          title: "Profile",
-          tabBarIcon: () => <SymbolView name="person" />,
-        }}
-      />
-      <Tabs.Screen name="index" options={{ href: null }} />
-    </Tabs>
+    <>
+      <Stack.Screen options={{ headerShown: false }} />
+      <Tabs tabBar={TabBar} screenOptions={{ headerShown: false }}>
+        <Tabs.Screen
+          name="home"
+          options={{
+            title: "Home",
+            tabBarIcon: () => <SymbolView name="house" />,
+          }}
+        />
+        <Tabs.Screen
+          name="profile"
+          options={{
+            title: "Profile",
+            tabBarIcon: () => <SymbolView name="person" />,
+          }}
+        />
+        <Tabs.Screen name="index" options={{ href: null }} />
+      </Tabs>
+    </>
   );
 }
 
@@ -37,10 +40,10 @@ const TabBar = ({ navigation }: BottomTabBarProps) => {
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={bottomBarStyle.button}
+          style={bottomBarStyle.addButton}
           onPress={() => navigation.navigate("add/index")}
         >
-          <SymbolView name="plus" tintColor="black" />
+          <SymbolView name="plus" tintColor="white" />
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -64,9 +67,10 @@ const bottomBarStyle = StyleSheet.create({
     alignItems: "center",
   },
   tabBar: {
-    marginTop: 16,
+    marginTop: 8,
     flexDirection: "row",
     justifyContent: "space-between",
+    alignItems: "center",
     width: "100%",
     paddingHorizontal: 48,
   },
@@ -77,6 +81,19 @@ const bottomBarStyle = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "white",
+    borderRadius: 8,
+    shadowColor: "black",
+    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+  },
+
+  addButton: {
+    width: 52,
+    height: 52,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "black",
     borderRadius: 8,
     shadowColor: "black",
     shadowRadius: 4,
