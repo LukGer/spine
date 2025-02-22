@@ -35,7 +35,7 @@ export default function RootLayout() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <Stack screenOptions={{ headerShown: false }}>
+      <Stack>
         <Stack.Screen name="index" />
         <Stack.Screen name="add/index" options={{ presentation: "modal" }} />
       </Stack>
