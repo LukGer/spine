@@ -64,7 +64,7 @@ export const query: AppRouteHandler<QueryRoute> = async (c) => {
       books.push({
         title: edition.title,
         subtitle: edition.subtitle,
-        authors: doc.author_name,
+        authors: doc.author_name ?? [],
         isbn: edition.isbn_13[0]!,
         pageCount: edition.number_of_pages,
         thumbnailUrl: `https://covers.openlibrary.org/b/isbn/${edition.isbn_13[0]}-L.jpg`,

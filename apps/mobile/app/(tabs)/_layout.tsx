@@ -40,7 +40,7 @@ const TabBar = ({ navigation }: BottomTabBarProps) => {
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={bottomBarStyle.addButton}
+          style={[bottomBarStyle.button, bottomBarStyle.addButton]}
           onPress={() => navigation.navigate("add/index")}
         >
           <SymbolView name="plus" tintColor="white" />
@@ -76,12 +76,13 @@ const bottomBarStyle = StyleSheet.create({
   },
 
   button: {
-    width: 40,
-    height: 40,
+    width: 48,
+    height: 48,
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "white",
-    borderRadius: 8,
+    borderRadius: 12,
+    borderCurve: "continuous",
     shadowColor: "black",
     shadowRadius: 4,
     shadowOffset: { width: 0, height: 2 },
@@ -89,15 +90,10 @@ const bottomBarStyle = StyleSheet.create({
   },
 
   addButton: {
-    width: 52,
-    height: 52,
-    justifyContent: "center",
-    alignItems: "center",
+    width: 58,
+    height: 58,
     backgroundColor: "black",
-    borderRadius: 8,
     shadowColor: "black",
-    shadowRadius: 4,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
+    borderRadius: 12,
   },
 });

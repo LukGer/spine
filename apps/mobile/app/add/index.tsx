@@ -1,16 +1,16 @@
 import { client } from "@/src/api/client";
 import * as Form from "@/src/components/ui/Form";
 import * as AppleColors from "@bacons/apple-colors";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   BarcodeScanningResult,
   CameraView,
   useCameraPermissions,
 } from "expo-camera";
 import { Image } from "expo-image";
-import { Stack, useNavigation } from "expo-router";
+import { Stack, useFocusEffect, useNavigation } from "expo-router";
 import { SymbolView } from "expo-symbols";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Button,
@@ -25,6 +25,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function AddPage() {
   const navigation = useNavigation();
+  const queryClient = useQueryClient();
 
   const [text, setText] = useState("");
   const [isbn, setIsbn] = useState("");
@@ -33,7 +34,7 @@ export default function AddPage() {
   const searchQuery = useQuery({
     queryKey: ["books", "search"],
     queryFn: async () => {
-      return await client.books.query
+      const books = await client.books.query
         .$get({
           query: {
             title: text.length > 0 ? text : undefined,
@@ -42,9 +43,21 @@ export default function AddPage() {
           },
         })
         .then((response) => response.json());
+
+      return books;
     },
     enabled: false,
   });
+
+  useFocusEffect(
+    useCallback(() => {
+      return () => {
+        queryClient.resetQueries({ queryKey: ["books", "search"] });
+        setText("");
+        setIsbn("");
+      };
+    }, [])
+  );
 
   const onBarcodeScanned = (code: string) => {
     setIsbn(code);
@@ -103,61 +116,65 @@ export default function AddPage() {
                 <SymbolView name="barcode.viewfinder" size={24} />
               </TouchableOpacity>
             </Form.HStack>
-            <Button title="Search" onPress={() => searchQuery.refetch()} />
+            <Button
+              title="Search"
+              onPress={() => searchQuery.refetch()}
+              disabled={searchQuery.isLoading || (!text && !isbn)}
+            />
           </Form.Section>
 
-          {searchQuery.isLoading && <ActivityIndicator />}
+          <View style={{ paddingHorizontal: 16, alignItems: "center" }}>
+            {searchQuery.isLoading && <ActivityIndicator />}
 
-          {searchQuery.isError && (
-            <View style={{ paddingHorizontal: 16, alignItems: "center" }}>
-              <SymbolView
-                name="exclamationmark.triangle"
-                size={64}
-                tintColor={AppleColors.systemRed}
-              />
-
-              <Text
-                style={{
-                  color: AppleColors.systemRed,
-                }}
-              >
-                Error: {searchQuery.error.message}
-              </Text>
-
-              <Button title="Retry" onPress={() => searchQuery.refetch()} />
-            </View>
-          )}
-
-          {searchQuery.isSuccess &&
-            searchQuery.data.map((book) => (
-              <View>
-                <Image
-                  source={book.thumbnailUrl}
-                  style={{
-                    height: 350,
-                    width: 250,
-                  }}
+            {searchQuery.isError && (
+              <>
+                <SymbolView
+                  name="exclamationmark.triangle"
+                  size={64}
+                  tintColor={AppleColors.systemRed}
                 />
-                <Text>{book.title}</Text>
-              </View>
-            ))}
 
-          {searchQuery.isSuccess && searchQuery.data.length === 0 && (
-            <View>
-              <SymbolView
-                name="magnifyingglass"
-                size={64}
-                tintColor="rgba(255, 255, 255, 0.6)"
-              />
-              <Text
-                style={{
-                  color: AppleColors.lightText,
-                }}
-              >
-                No books found
-              </Text>
-            </View>
-          )}
+                <Text
+                  style={{
+                    color: AppleColors.systemRed,
+                  }}
+                >
+                  Error: {searchQuery.error.message}
+                </Text>
+              </>
+            )}
+
+            {searchQuery.data &&
+              searchQuery.data.map((book) => (
+                <View key={book.isbn} style={{ alignItems: "center" }}>
+                  <Image
+                    source={book.thumbnailUrl}
+                    style={{
+                      height: 350,
+                      width: 250,
+                    }}
+                  />
+                  <Text>{book.title}</Text>
+                </View>
+              ))}
+
+            {searchQuery.isSuccess && searchQuery.data.length === 0 && (
+              <>
+                <SymbolView
+                  name="magnifyingglass"
+                  size={64}
+                  tintColor={AppleColors.label}
+                />
+                <Text
+                  style={{
+                    color: AppleColors.label,
+                  }}
+                >
+                  No books found
+                </Text>
+              </>
+            )}
+          </View>
         </Form.List>
         <Modal
           animationType="slide"

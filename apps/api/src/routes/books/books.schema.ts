@@ -27,7 +27,7 @@ export const booksSearchSchema = z.object({
   docs: z.array(
     z.object({
       key: z.string(),
-      author_name: z.array(z.string()),
+      author_name: z.array(z.string()).optional(),
       title: z.string(),
       editions: z.object({
         numFound: z.number().int(),
@@ -46,14 +46,14 @@ export const booksSearchSchema = z.object({
 
 export const editionSchema = z.object({
   key: z.string(),
-  publishers: z.array(z.string()),
+  publishers: z.array(z.string()).optional(),
   number_of_pages: z.number().int().optional(),
   covers: z.array(z.number().int()).optional(),
   authors: z.array(z.object({ key: z.string() })).optional(),
   subjects: z.array(z.string()).optional(),
   title: z.string(),
   subtitle: z.string().optional(),
-  publish_date: z.string(),
+  publish_date: z.string().optional(),
   isbn_10: z.array(z.string()).optional(),
   isbn_13: z.array(z.string()).optional(),
 });

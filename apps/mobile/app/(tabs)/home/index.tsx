@@ -76,6 +76,7 @@ export default function HomePage() {
                 style={{
                   color: AppleColors.label,
                   marginTop: 16,
+                  fontSize: 20,
                 }}
               >
                 You don't have any books yet.
@@ -83,7 +84,7 @@ export default function HomePage() {
 
               <View
                 style={{
-                  marginTop: 8,
+                  marginTop: 12,
                   flexDirection: "row",
                   alignItems: "center",
                   gap: 4,
@@ -91,7 +92,8 @@ export default function HomePage() {
               >
                 <Text
                   style={{
-                    color: AppleColors.label,
+                    color: AppleColors.secondaryLabel,
+                    fontSize: 16,
                   }}
                 >
                   Add books by tapping the
@@ -100,15 +102,16 @@ export default function HomePage() {
                 <SymbolView
                   name="plus"
                   size={16}
-                  tintColor={AppleColors.label}
+                  tintColor={AppleColors.secondaryLabel}
                 />
 
                 <Text
                   style={{
-                    color: AppleColors.label,
+                    color: AppleColors.secondaryLabel,
+                    fontSize: 16,
                   }}
                 >
-                  button below.
+                  below.
                 </Text>
               </View>
             </View>
