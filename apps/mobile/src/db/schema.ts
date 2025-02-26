@@ -29,6 +29,7 @@ export const authors = sqliteTable("authors", {
 });
 
 export type DbAuthor = typeof authors.$inferSelect;
+export type DbAuthorInsert = typeof authors.$inferInsert;
 
 export const authorsRelations = relations(authors, ({ many }) => ({
   books: many(booksToAuthors),

@@ -1,3 +1,4 @@
+import * as AppleColors from "@bacons/apple-colors";
 import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
 import { Stack, Tabs } from "expo-router";
 import { SymbolView } from "expo-symbols";
@@ -92,7 +93,7 @@ const bottomBarStyle = StyleSheet.create({
   addButton: {
     width: 58,
     height: 58,
-    backgroundColor: "black",
+    backgroundColor: AppleColors.systemOrange,
     shadowColor: "black",
     borderRadius: 12,
   },

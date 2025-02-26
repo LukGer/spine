@@ -70,7 +70,11 @@ export default function HomePage() {
                 height: 400,
               }}
             >
-              <SymbolView name="tray" size={64} tintColor={AppleColors.label} />
+              <SymbolView
+                name="tray"
+                size={64}
+                tintColor={AppleColors.systemOrange}
+              />
 
               <Text
                 style={{
@@ -102,7 +106,7 @@ export default function HomePage() {
                 <SymbolView
                   name="plus"
                   size={16}
-                  tintColor={AppleColors.secondaryLabel}
+                  tintColor={AppleColors.systemOrange}
                 />
 
                 <Text

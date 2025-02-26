@@ -13,10 +13,18 @@
     },
     "development": {
       "developmentClient": true,
-      "distribution": "internal"
+      "distribution": "internal",
+      "env": {
+        "APP_VARIANT": "dev",
+        "EXPO_PUBLIC_API_BASE_URL": "http://localhost:3000"
+      }
     },
     "preview": {
-      "distribution": "internal"
+      "distribution": "internal",
+      "env": {
+        "APP_VARIANT": "pre",
+        "EXPO_PUBLIC_API_BASE_URL": "https://dev.spine.lukger.dev"
+      }
     },
     "production": {
       "autoIncrement": true,

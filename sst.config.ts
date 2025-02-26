@@ -10,21 +10,12 @@ export default $config({
     };
   },
   async run() {
-    // const { domain, zone } = await import("./infra/dns");
-    // const { api } = await import("./infra/api");
-    // return {
-    //   api: api.url,
-    //   domain,
-    //   zone,
-    // };
-
-    const worker = new sst.cloudflare.Worker("MyWorker", {
-      handler: "./index.ts",
-      url: true,
-    });
-
+    const { domain, zone } = await import("./infra/dns");
+    const { api } = await import("./infra/api");
     return {
-      api: worker.url,
+      api: api.url,
+      domain,
+      zone,
     };
   },
 });

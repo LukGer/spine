@@ -2,15 +2,15 @@
   "name": "spine",
   "private": true,
   "scripts": {
-    "build": "turbo run build",
-    "dev": "turbo run dev",
-    "lint": "turbo run lint",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "check-types": "turbo run check-types",
     "android": "expo run:android",
-    "ios": "expo run:ios"
+    "build": "turbo run build",
+    "check-types": "turbo run check-types",
+    "dev": "turbo run dev",
+    "ios": "expo run:ios",
+    "lint": "turbo run lint"
   },
   "devDependencies": {
+    "@cloudflare/workers-types": "^4.20250224.0",
     "prettier": "^3.5.0",
     "turbo": "^2.4.2",
     "typescript": "5.7.3"
@@ -24,10 +24,7 @@
     "packages/*"
   ],
   "dependencies": {
-    "react-native-reanimated": "^3.16.7",
-    "expo": "~52.0.37",
-    "react": "18.3.1",
-    "react-native": "0.76.7"
+    "sst": "3.9.10"
   },
   "version": "1.0.0"
 }
