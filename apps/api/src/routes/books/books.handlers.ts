@@ -59,7 +59,8 @@ export const query: AppRouteHandler<QueryRoute> = async (c) => {
         .then((res) => res.json())
         .then((res) => editionSchema.parse(res));
 
-      if (!edition.isbn_13) continue;
+      if (!edition.isbn_13 || !edition.title || !edition.number_of_pages)
+        continue;
 
       books.push({
         title: edition.title,

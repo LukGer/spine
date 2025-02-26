@@ -5,6 +5,7 @@ export const books = sqliteTable("books", {
   id: int().primaryKey({ autoIncrement: true }),
   title: text().notNull(),
   subtitle: text(),
+  authors: text(),
   publisher: text(),
   publishedDate: text(),
   description: text(),
@@ -19,40 +20,7 @@ export const books = sqliteTable("books", {
 export type DbBook = typeof books.$inferSelect;
 
 export const booksRelations = relations(books, ({ many }) => ({
-  authors: many(booksToAuthors),
   categories: many(booksToCategories),
-}));
-
-export const authors = sqliteTable("authors", {
-  id: int().primaryKey({ autoIncrement: true }),
-  name: text().notNull(),
-});
-
-export type DbAuthor = typeof authors.$inferSelect;
-export type DbAuthorInsert = typeof authors.$inferInsert;
-
-export const authorsRelations = relations(authors, ({ many }) => ({
-  books: many(booksToAuthors),
-}));
-
-export const booksToAuthors = sqliteTable("book_authors", {
-  bookId: int()
-    .notNull()
-    .references(() => books.id),
-  authorId: int()
-    .notNull()
-    .references(() => authors.id),
-});
-
-export const booksToAuthorsRelations = relations(booksToAuthors, ({ one }) => ({
-  book: one(books, {
-    fields: [booksToAuthors.bookId],
-    references: [books.id],
-  }),
-  author: one(authors, {
-    fields: [booksToAuthors.authorId],
-    references: [authors.id],
-  }),
 }));
 
 export const categories = sqliteTable("categories", {

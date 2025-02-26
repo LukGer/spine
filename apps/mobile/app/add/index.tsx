@@ -1,6 +1,7 @@
 import { client } from "@/src/api/client";
 import AddBooksListItem from "@/src/components/AddBooksListItem";
 import * as Form from "@/src/components/ui/Form";
+import { useBooksQuery } from "@/src/repository/books";
 import * as AppleColors from "@bacons/apple-colors";
 import { LegendList } from "@legendapp/list";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -27,6 +28,8 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 export default function AddPage() {
   const navigation = useNavigation();
   const queryClient = useQueryClient();
+
+  const existingBooksQuery = useBooksQuery();
 
   const [text, setText] = useState("");
   const [isbn, setIsbn] = useState("");
@@ -57,7 +60,7 @@ export default function AddPage() {
         setText("");
         setIsbn("");
       };
-    }, [])
+    }, [queryClient])
   );
 
   const onBarcodeScanned = (code: string) => {
@@ -153,7 +156,12 @@ export default function AddPage() {
               <LegendList
                 style={{ width: "100%", paddingBottom: 60 }}
                 data={searchQuery.data}
-                renderItem={({ item }) => <AddBooksListItem book={item} />}
+                renderItem={({ item }) => (
+                  <AddBooksListItem
+                    book={item}
+                    existingBooks={existingBooksQuery.data}
+                  />
+                )}
                 keyExtractor={(item) => item.isbn}
                 estimatedItemSize={456}
                 ItemSeparatorComponent={() => (

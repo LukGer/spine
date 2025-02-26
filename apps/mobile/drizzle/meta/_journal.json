@@ -15,6 +15,13 @@
       "when": 1739889279663,
       "tag": "0001_closed_risque",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1740583512973,
+      "tag": "0002_sharp_toro",
+      "breakpoints": true
     }
   ]
 }
