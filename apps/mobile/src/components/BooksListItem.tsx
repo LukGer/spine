@@ -4,15 +4,24 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { eq } from "drizzle-orm";
 import { Image } from "expo-image";
 import { SymbolView } from "expo-symbols";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { useEffect, useState } from "react";
+import {
+  Image as RNImage,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import Swipeable from "react-native-gesture-handler/ReanimatedSwipeable";
 import Animated, {
-  Extrapolation,
-  interpolate,
   SharedValue,
   useAnimatedStyle,
+  useDerivedValue,
+  withSpring,
 } from "react-native-reanimated";
 import { db } from "../db";
+
+const IMAGE_HEIGHT = 400;
 
 const BooksListItem = ({ book }: { book: DbBook }) => {
   const queryClient = useQueryClient();
@@ -26,38 +35,52 @@ const BooksListItem = ({ book }: { book: DbBook }) => {
     },
   });
 
-  function RightAction(_: SharedValue<number>, drag: SharedValue<number>) {
-    const animatedStyle = useAnimatedStyle(() => {
-      return {
-        transform: [
-          {
-            scale: interpolate(drag.value, [-75, -100], [1, 1.5], {
-              extrapolateRight: Extrapolation.CLAMP,
-              extrapolateLeft: Extrapolation.CLAMP,
-            }),
-          },
-        ],
-      };
-    });
+  function RightAction(
+    progress: SharedValue<number>,
+    drag: SharedValue<number>
+  ) {
+    const scale = useDerivedValue(
+      () => withSpring(drag.value < -75 ? 1.5 : 1),
+      [drag]
+    );
+
+    const containerStyle = useAnimatedStyle(() => ({
+      width: Math.max(100, -drag.value),
+    }));
+
+    const animatedStyle = useAnimatedStyle(() => ({
+      transform: [{ scale: scale.value }],
+    }));
 
     return (
-      <Animated.View style={styles.rightAction}>
-        <TouchableOpacity
-          style={{
-            width: "100%",
-            height: "100%",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-          onPress={() => removeBookMutation.mutate(book.id)}
-        >
-          <Animated.View style={animatedStyle}>
-            <SymbolView name="xmark.app" size={28} tintColor="white" />
-          </Animated.View>
-        </TouchableOpacity>
+      <Animated.View style={[styles.rightAction, containerStyle]}>
+        <View style={styles.actionButton}>
+          <TouchableOpacity
+            style={{
+              width: "100%",
+              height: "100%",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+            onPress={() => removeBookMutation.mutate(book.id)}
+          >
+            <Animated.View style={animatedStyle}>
+              <SymbolView name="xmark.app" size={28} tintColor="white" />
+            </Animated.View>
+          </TouchableOpacity>
+        </View>
       </Animated.View>
     );
   }
+
+  const [width, setWidth] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (!book.thumbnailUrl) return;
+    RNImage.getSize(book.thumbnailUrl, (w, h) => {
+      setWidth((IMAGE_HEIGHT * w) / h); // Calculate width based on fixed height
+    });
+  }, [book.thumbnailUrl]);
 
   return (
     <View key={book.isbn} style={styles.container}>
@@ -65,7 +88,10 @@ const BooksListItem = ({ book }: { book: DbBook }) => {
         containerStyle={styles.imageContainer}
         renderRightActions={RightAction}
       >
-        <Image source={book.thumbnailUrl} style={styles.image} />
+        <Image
+          source={book.thumbnailUrl}
+          style={[styles.image, { width, height: IMAGE_HEIGHT }]}
+        />
       </Swipeable>
       <Text style={styles.title}>{book.title}</Text>
 
@@ -84,12 +110,11 @@ const styles = StyleSheet.create({
     gap: 2,
   },
   imageContainer: {
-    width: "75%",
+    height: IMAGE_HEIGHT,
     alignSelf: "center",
   },
   image: {
-    width: "100%",
-    aspectRatio: 2 / 3,
+    alignSelf: "center",
   },
   title: {
     marginVertical: 8,
@@ -114,14 +139,18 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   rightAction: {
-    width: 100,
-    flexDirection: "column",
-    justifyContent: "center",
-    alignItems: "center",
-
+    height: "100%",
     backgroundColor: AppleColors.systemRed,
     borderTopRightRadius: 8,
     borderBottomRightRadius: 8,
+  },
+  actionButton: {
+    position: "absolute",
+    width: 100,
+    height: "100%",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
 

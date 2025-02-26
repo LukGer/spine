@@ -1,15 +1,13 @@
 import { client } from "@/src/api/client";
-import AddBooksListItem from "@/src/components/AddBooksListItem";
 import * as Form from "@/src/components/ui/Form";
-import { useBooksQuery } from "@/src/repository/books";
 import * as AppleColors from "@bacons/apple-colors";
-import { LegendList } from "@legendapp/list";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   BarcodeScanningResult,
   CameraView,
   useCameraPermissions,
 } from "expo-camera";
+import { Image } from "expo-image";
 import { Stack, useFocusEffect, useNavigation } from "expo-router";
 import { SymbolView } from "expo-symbols";
 import { useCallback, useEffect, useState } from "react";
@@ -28,8 +26,6 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 export default function AddPage() {
   const navigation = useNavigation();
   const queryClient = useQueryClient();
-
-  const existingBooksQuery = useBooksQuery();
 
   const [text, setText] = useState("");
   const [isbn, setIsbn] = useState("");
@@ -60,7 +56,7 @@ export default function AddPage() {
         setText("");
         setIsbn("");
       };
-    }, [queryClient])
+    }, [])
   );
 
   const onBarcodeScanned = (code: string) => {
@@ -88,12 +84,8 @@ export default function AddPage() {
               }}
               onPress={() => navigation.goBack()}
             >
-              <SymbolView
-                name="chevron.backward"
-                size={18}
-                tintColor={AppleColors.systemBlue}
-              />
-              <Text style={{ color: AppleColors.systemBlue, fontSize: 18 }}>
+              <SymbolView name="chevron.backward" size={18} />
+              <Text style={{ color: AppleColors.link, fontSize: 18 }}>
                 Back
               </Text>
             </TouchableOpacity>
@@ -152,23 +144,19 @@ export default function AddPage() {
               </>
             )}
 
-            {searchQuery.data && (
-              <LegendList
-                style={{ width: "100%", paddingBottom: 60 }}
-                data={searchQuery.data}
-                renderItem={({ item }) => (
-                  <AddBooksListItem
-                    book={item}
-                    existingBooks={existingBooksQuery.data}
+            {searchQuery.data &&
+              searchQuery.data.map((book) => (
+                <View key={book.isbn} style={{ alignItems: "center" }}>
+                  <Image
+                    source={book.thumbnailUrl}
+                    style={{
+                      height: 350,
+                      width: 250,
+                    }}
                   />
-                )}
-                keyExtractor={(item) => item.isbn}
-                estimatedItemSize={456}
-                ItemSeparatorComponent={() => (
-                  <View style={styles.listSeperator} />
-                )}
-              />
-            )}
+                  <Text>{book.title}</Text>
+                </View>
+              ))}
 
             {searchQuery.isSuccess && searchQuery.data.length === 0 && (
               <>
@@ -338,10 +326,5 @@ const styles = StyleSheet.create({
   overlay: {
     flex: 1,
     backgroundColor: "rgba(0,0,0,0.7)",
-  },
-  listSeperator: {
-    height: StyleSheet.hairlineWidth,
-    backgroundColor: AppleColors.separator,
-    marginVertical: 8,
   },
 });

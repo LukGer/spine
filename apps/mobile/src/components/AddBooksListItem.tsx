@@ -1,26 +1,27 @@
-import { books, DbBook } from "@/src/db/schema";
+import { books } from "@/src/db/schema";
 import * as AppleColors from "@bacons/apple-colors";
 import { BookResponse } from "@repo/api";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { eq } from "drizzle-orm";
 import { Image } from "expo-image";
 import { SymbolView } from "expo-symbols";
+import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
+  Image as RNImage,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
 import { db } from "../db";
+import { useBookByIsbnQuery } from "../repository/books";
 
-const AddBooksListItem = ({
-  book,
-  existingBooks,
-}: {
-  book: BookResponse;
-  existingBooks: DbBook[];
-}) => {
+const IMAGE_HEIGHT = 400;
+
+const AddBooksListItem = ({ book }: { book: BookResponse }) => {
+  const bookQuery = useBookByIsbnQuery(book.isbn);
+
   const queryClient = useQueryClient();
 
   const bookMutation = useMutation({
@@ -52,15 +53,28 @@ const AddBooksListItem = ({
       }
     },
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["books", book.isbn] });
       queryClient.invalidateQueries({ queryKey: ["books"], exact: true });
     },
   });
 
-  const isAdded = existingBooks.some((b) => b.isbn === book.isbn);
+  const [width, setWidth] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (!book.thumbnailUrl) return;
+    RNImage.getSize(book.thumbnailUrl, (w, h) => {
+      setWidth((IMAGE_HEIGHT * w) / h); // Calculate width based on fixed height
+    });
+  }, [book.thumbnailUrl]);
+
+  const isAdded = bookQuery.isFetched && bookQuery.data;
 
   return (
     <View key={book.isbn} style={styles.container}>
-      <Image source={book.thumbnailUrl} style={styles.image} />
+      <Image
+        source={book.thumbnailUrl}
+        style={[styles.image, { width, height: IMAGE_HEIGHT }]}
+      />
       <Text style={styles.title}>{book.title}</Text>
 
       <Text style={styles.authors}>{book.authors.join(", ")}</Text>
@@ -100,8 +114,6 @@ const styles = StyleSheet.create({
   },
   image: {
     alignSelf: "center",
-    width: "75%",
-    aspectRatio: 2 / 3,
   },
   title: {
     marginVertical: 8,
