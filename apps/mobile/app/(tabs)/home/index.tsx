@@ -8,6 +8,7 @@ import React from "react";
 import {
   ActivityIndicator,
   ScrollView,
+  StyleSheet,
   Text,
   TouchableOpacity,
   View,
@@ -53,7 +54,9 @@ export default function HomePage() {
               keyExtractor={(item) => item.id.toString()}
               renderItem={({ item }) => <BooksListItem book={item} />}
               estimatedItemSize={220}
-              ItemSeparatorComponent={() => <View style={{ height: 16 }} />}
+              ItemSeparatorComponent={() => (
+                <View style={styles.listSeperator} />
+              )}
             />
           )}
 
@@ -63,6 +66,14 @@ export default function HomePage() {
     </>
   );
 }
+
+const styles = StyleSheet.create({
+  listSeperator: {
+    height: StyleSheet.hairlineWidth,
+    backgroundColor: AppleColors.separator,
+    marginVertical: 16,
+  },
+});
 
 const EmptyState = () => {
   return (

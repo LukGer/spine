@@ -38,13 +38,12 @@ const AddBooksListItem = ({ book }: { book: BookResponse }) => {
           .values({
             isbn: book.isbn,
             title: book.title,
-            subtitle: book.subtitle,
             authors: book.authors.join(", "),
             publisher: book.publisher,
             publishedDate: book.publishedDate,
             description: book.description,
             pageCount: book.pageCount,
-            thumbnailUrl: book.thumbnailUrl,
+            thumbnailUrl: book.coverImageUrl,
             state: "to_read",
           })
           .execute();
@@ -61,18 +60,18 @@ const AddBooksListItem = ({ book }: { book: BookResponse }) => {
   const [width, setWidth] = useState<number | null>(null);
 
   useEffect(() => {
-    if (!book.thumbnailUrl) return;
-    RNImage.getSize(book.thumbnailUrl, (w, h) => {
-      setWidth((IMAGE_HEIGHT * w) / h); // Calculate width based on fixed height
+    if (!book.coverImageUrl) return;
+    RNImage.getSize(book.coverImageUrl, (w, h) => {
+      setWidth((IMAGE_HEIGHT * w) / h);
     });
-  }, [book.thumbnailUrl]);
+  }, [book.coverImageUrl]);
 
   const isAdded = bookQuery.isFetched && bookQuery.data;
 
   return (
     <View key={book.isbn} style={styles.container}>
       <Image
-        source={book.thumbnailUrl}
+        source={book.coverImageUrl}
         style={[styles.image, { width, height: IMAGE_HEIGHT }]}
       />
       <Text style={styles.title}>{book.title}</Text>

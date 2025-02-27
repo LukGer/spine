@@ -1,13 +1,14 @@
 import { client } from "@/src/api/client";
+import AddBooksListItem from "@/src/components/AddBooksListItem";
 import * as Form from "@/src/components/ui/Form";
 import * as AppleColors from "@bacons/apple-colors";
+import { LegendList } from "@legendapp/list";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   BarcodeScanningResult,
   CameraView,
   useCameraPermissions,
 } from "expo-camera";
-import { Image } from "expo-image";
 import { Stack, useFocusEffect, useNavigation } from "expo-router";
 import { SymbolView } from "expo-symbols";
 import { useCallback, useEffect, useState } from "react";
@@ -37,7 +38,7 @@ export default function AddPage() {
       const books = await client.books.query
         .$get({
           query: {
-            title: text.length > 0 ? text : undefined,
+            q: text.length > 0 ? text : undefined,
             isbn: isbn.length > 0 ? isbn : undefined,
             lang: "de",
           },
@@ -56,7 +57,7 @@ export default function AddPage() {
         setText("");
         setIsbn("");
       };
-    }, [])
+    }, [queryClient])
   );
 
   const onBarcodeScanned = (code: string) => {
@@ -144,19 +145,18 @@ export default function AddPage() {
               </>
             )}
 
-            {searchQuery.data &&
-              searchQuery.data.map((book) => (
-                <View key={book.isbn} style={{ alignItems: "center" }}>
-                  <Image
-                    source={book.thumbnailUrl}
-                    style={{
-                      height: 350,
-                      width: 250,
-                    }}
-                  />
-                  <Text>{book.title}</Text>
-                </View>
-              ))}
+            {searchQuery.data && (
+              <LegendList
+                style={{ width: "100%", paddingBottom: 60 }}
+                data={searchQuery.data}
+                renderItem={({ item }) => <AddBooksListItem book={item} />}
+                keyExtractor={(item) => item.isbn}
+                estimatedItemSize={456}
+                ItemSeparatorComponent={() => (
+                  <View style={styles.listSeperator} />
+                )}
+              />
+            )}
 
             {searchQuery.isSuccess && searchQuery.data.length === 0 && (
               <>
@@ -326,5 +326,10 @@ const styles = StyleSheet.create({
   overlay: {
     flex: 1,
     backgroundColor: "rgba(0,0,0,0.7)",
+  },
+  listSeperator: {
+    height: StyleSheet.hairlineWidth,
+    backgroundColor: AppleColors.separator,
+    marginVertical: 8,
   },
 });

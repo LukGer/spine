@@ -2,8 +2,8 @@ GET https://www.googleapis.com/books/v1/volumes?q=Harry%20Potter
 
 ###
 
-GET https://books.google.com/books/content?id=XtekEncdTZcC&printsec=frontcover&img=1&zoom=2
+GET https://books.google.com/books/content?id=bHp5CK4DLmIC&img=1&zoom=2
 
 ###
 
-GET https://www.googleapis.com/books/v1/volumes?q=isbn:9781781100769
+GET https://www.googleapis.com/books/v1/volumes?q=isbn:9781781100776
