@@ -1,5 +1,5 @@
-import env from "@/env";
 import type { AppRouteHandler } from "@/lib/types";
+import { env } from "hono/adapter";
 import type { QueryRoute } from "./books.routes";
 import {
   BookResponse,
@@ -8,7 +8,6 @@ import {
 } from "./books.schema";
 
 const GOOGLE_BOOKS_API = "https://www.googleapis.com/books/v1/volumes";
-const API_KEY = env.GOOGLE_API_KEY;
 
 function normalizeIsbn(
   isbn: string | undefined | null
@@ -19,6 +18,8 @@ function normalizeIsbn(
 }
 
 export const query: AppRouteHandler<QueryRoute> = async (c) => {
+  const { GOOGLE_API_KEY } = env<{ GOOGLE_API_KEY: string }>(c);
+
   const { q: query, isbn, lang } = c.req.valid("query");
 
   if (!query && !isbn) {
@@ -30,7 +31,7 @@ export const query: AppRouteHandler<QueryRoute> = async (c) => {
   const searchQuery = normalizedIsbn ? `isbn:${normalizedIsbn}` : query;
 
   const response = await fetch(
-    `${GOOGLE_BOOKS_API}?q=${searchQuery}&langRestrict=${lang}`
+    `${GOOGLE_BOOKS_API}?q=${searchQuery}&langRestrict=${lang}&key=${GOOGLE_API_KEY}`
   )
     .then((res) => res.json())
     .then((res) => googleBooksSchema.parse(res))
