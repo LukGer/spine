@@ -1,3 +1,4 @@
+import { IOSIcons } from "@expo/config-types";
 import { ConfigContext, ExpoConfig } from "expo/config";
 
 const IS_DEV = process.env.APP_VARIANT === "dev";
@@ -27,6 +28,42 @@ const getUniqueBundleId = () => {
   return "dev.lukger.spine";
 };
 
+const getAppScheme = () => {
+  if (IS_DEV) {
+    return "spine-dev";
+  }
+
+  if (IS_PREVIEW) {
+    return "spine-pre";
+  }
+
+  return "spine-app";
+};
+
+const getAppIcons = (): IOSIcons => {
+  if (IS_DEV) {
+    return {
+      dark: "./assets/icons/dev/ios-dark.png",
+      light: "./assets/icons/dev/ios-light.png",
+      tinted: "./assets/icons/dev/ios-tinted.png",
+    };
+  }
+
+  if (IS_PREVIEW) {
+    return {
+      dark: "./assets/icons/pre/ios-dark.png",
+      light: "./assets/icons/pre/ios-light.png",
+      tinted: "./assets/icons/pre/ios-tinted.png",
+    };
+  }
+
+  return {
+    dark: "./assets/icons/ios-dark.png",
+    light: "./assets/icons/ios-light.png",
+    tinted: "./assets/icons/ios-tinted.png",
+  };
+};
+
 export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
   name: getAppName(),
@@ -34,7 +71,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   version: "1.0.0",
   orientation: "portrait",
   icon: "./assets/images/icon.png",
-  scheme: "spine-app",
+  scheme: getAppScheme(),
   userInterfaceStyle: "light",
   newArchEnabled: true,
   ios: {
@@ -43,28 +80,21 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     infoPlist: {
       ITSAppUsesNonExemptEncryption: false,
     },
-  },
-  android: {
-    adaptiveIcon: {
-      foregroundImage: "./assets/images/adaptive-icon.png",
-      backgroundColor: "#ffffff",
-    },
-    package: "com.lukger.spine",
-  },
-  web: {
-    bundler: "metro",
-    output: "static",
-    favicon: "./assets/images/favicon.png",
+    icon: getAppIcons(),
   },
   plugins: [
     "expo-router",
     [
       "expo-splash-screen",
       {
-        image: "./assets/images/splash-icon.png",
+        image: "./assets/icons/splash-icon-light.png",
+        backgroundColor: "#ffffff",
         imageWidth: 200,
         resizeMode: "contain",
-        backgroundColor: "#ffffff",
+        dark: {
+          image: "./assets/icons/splash-icon-dark.png",
+          backgroundColor: "#000000",
+        },
       },
     ],
     "expo-sqlite",
