@@ -25,6 +25,7 @@ const EnvSchema = z.object({
     "trace",
     "silent",
   ]),
+  GOOGLE_API_KEY: z.string(),
 });
 
 export type env = z.infer<typeof EnvSchema>;

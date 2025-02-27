@@ -11,7 +11,7 @@ export const query = createRoute({
   tags,
   request: {
     query: z.object({
-      title: z.string().optional(),
+      q: z.string().optional(),
       isbn: z.string().optional(),
       lang: z.string().optional(),
     }),
