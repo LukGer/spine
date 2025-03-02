@@ -6,4 +6,8 @@ GET https://books.google.com/books/content?id=bHp5CK4DLmIC&img=1&zoom=2
 
 ###
 
-GET https://www.googleapis.com/books/v1/volumes?q=isbn:9781781100776
+GET https://www.googleapis.com/books/v1/volumes?q=isbn:9783843200059
+
+###
+
+GET http://localhost:3000/books/query?isbn=9781781100776&lang=de

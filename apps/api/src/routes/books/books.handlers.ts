@@ -34,17 +34,14 @@ export const query: AppRouteHandler<QueryRoute> = async (c) => {
     `${GOOGLE_BOOKS_API}?q=${searchQuery}&langRestrict=${lang}&key=${GOOGLE_API_KEY}`
   )
     .then((res) => res.json())
-    .then((res) => googleBooksSchema.parse(res))
-    .catch((err) => {
-      console.error(err);
-      return { items: [] };
-    });
+    .then((res) => googleBooksSchema.parse(res));
 
   const books: BookResponse[] = [];
   for (const item of response.items) {
     const { success, data, error } = bookVolumeSchema.safeParse(item);
 
     if (!success) {
+      console.error(error);
       continue;
     }
 

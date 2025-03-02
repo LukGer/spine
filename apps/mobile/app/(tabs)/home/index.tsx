@@ -7,15 +7,21 @@ import { SymbolView } from "expo-symbols";
 import React from "react";
 import {
   ActivityIndicator,
-  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
+import Animated, {
+  useAnimatedRef,
+  useScrollViewOffset,
+} from "react-native-reanimated";
 
 export default function HomePage() {
   const query = useBooksQuery();
+
+  const scrollRef = useAnimatedRef<Animated.ScrollView>();
+  const scroll = useScrollViewOffset(scrollRef);
 
   return (
     <>
@@ -38,31 +44,31 @@ export default function HomePage() {
           ),
         }}
       />
-      <ScrollView
+      <Animated.ScrollView
+        ref={scrollRef}
         contentInsetAdjustmentBehavior="automatic"
         style={{ paddingHorizontal: 16, paddingTop: 16 }}
       >
-        <View style={{ flex: 1 }}>
-          {query.isLoading && <ActivityIndicator />}
+        {query.isLoading && <ActivityIndicator />}
 
-          {query.isError && <Text>Error: {query.error.message}</Text>}
+        {query.isError && <Text>Error: {query.error.message}</Text>}
 
-          {query.isSuccess && (
-            <LegendList
-              style={{ paddingBottom: 72 }}
-              data={query.data}
-              keyExtractor={(item) => item.id.toString()}
-              renderItem={({ item }) => <BooksListItem book={item} />}
-              estimatedItemSize={220}
-              ItemSeparatorComponent={() => (
-                <View style={styles.listSeperator} />
-              )}
-            />
-          )}
+        {query.isSuccess && (
+          <LegendList
+            style={{ paddingBottom: 72 }}
+            data={query.data}
+            keyExtractor={(item) => item.id.toString()}
+            renderItem={({ item, index }) => (
+              <BooksListItem scroll={scroll} book={item} index={index} />
+            )}
+            estimatedItemSize={506}
+            scrollEnabled={false}
+            ItemSeparatorComponent={() => <View style={styles.listSeperator} />}
+          />
+        )}
 
-          {query.isSuccess && query.data.length === 0 && <EmptyState />}
-        </View>
-      </ScrollView>
+        {query.isSuccess && query.data.length === 0 && <EmptyState />}
+      </Animated.ScrollView>
     </>
   );
 }

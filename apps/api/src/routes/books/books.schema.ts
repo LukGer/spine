@@ -16,8 +16,8 @@ export const bookVolumeSchema = z.object({
     ),
     pageCount: z.number().int(),
     categories: z.array(z.string()),
-    averageRating: z.number(),
-    ratingsCount: z.number(),
+    averageRating: z.number().optional(),
+    ratingsCount: z.number().optional(),
     language: z.string(),
   }),
 });

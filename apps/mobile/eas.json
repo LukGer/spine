@@ -5,13 +5,19 @@
   },
   "build": {
     "simulator": {
+      "environment": "development",
       "distribution": "internal",
       "developmentClient": true,
       "ios": {
         "simulator": true
+      },
+      "env": {
+        "APP_VARIANT": "dev",
+        "EXPO_PUBLIC_API_BASE_URL": "http://localhost:3000"
       }
     },
     "development": {
+      "environment": "development",
       "developmentClient": true,
       "distribution": "internal",
       "env": {
@@ -20,6 +26,7 @@
       }
     },
     "preview": {
+      "environment": "preview",
       "distribution": "internal",
       "env": {
         "APP_VARIANT": "pre",
@@ -27,6 +34,7 @@
       }
     },
     "production": {
+      "environment": "production",
       "autoIncrement": true,
       "env": {
         "EXPO_PUBLIC_API_BASE_URL": "https://spine.lukger.dev"

@@ -32,4 +32,7 @@ config.resolver.nodeModulesPaths = [
 
 config.resolver.sourceExts.push("sql");
 
+config.resolver.assetExts.push("obj");
+config.resolver.assetExts.push("glb");
+
 module.exports = config;
