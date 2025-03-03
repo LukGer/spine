@@ -100,10 +100,9 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     "expo-sqlite",
     "@bacons/apple-colors",
     [
-      "react-native-vision-camera",
+      "expo-camera",
       {
-        cameraPermissionText: "Allow $(PRODUCT_NAME) to access your camera",
-        enableCodeScanner: true,
+        cameraPermission: "Allow $(PRODUCT_NAME) to access your camera",
       },
     ],
   ],
