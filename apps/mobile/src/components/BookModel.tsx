@@ -22,10 +22,10 @@ const BookModel = ({
 
   useFrame(() => {
     if (meshRef.current) {
-      meshRef.current.rotation.x = interpolate(
+      meshRef.current.rotation.z = interpolate(
         scroll.value + 150,
-        [index * 500 - 250, index * 500 + 250],
-        [degToRad(275), degToRad(265)],
+        [index * 500 - 500, index * 500, index * 500 + 500],
+        [degToRad(-20), 0, degToRad(-20)],
         {
           extrapolateLeft: "clamp",
           extrapolateRight: "clamp",
@@ -38,7 +38,7 @@ const BookModel = ({
   const height = coverTexture?.image?.height || 0;
 
   return (
-    <group ref={meshRef} rotation={[Math.PI / 2, 0, 0]} scale={0.3}>
+    <group ref={meshRef} rotation={[Math.PI / 2, 0, 0]} scale={0.25}>
       <Gltf src={BookGlb}></Gltf>
 
       {coverTexture && (
