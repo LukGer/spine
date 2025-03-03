@@ -6,9 +6,10 @@ import {
 import { SymbolView } from "expo-symbols";
 import { useEffect, useState } from "react";
 import {
-  ActivityIndicator,
   Dimensions,
+  Linking,
   StyleSheet,
+  Text,
   TouchableOpacity,
   View,
 } from "react-native";
@@ -20,6 +21,23 @@ const scanAreaWidth = width * 0.8;
 const scanAreaHeight = height * 0.2;
 const scanAreaX = (width - scanAreaWidth) / 2;
 const scanAreaY = (height - scanAreaHeight) / 2;
+
+const PermissionsRequired = () => {
+  const openSettings = () => {
+    Linking.openSettings();
+  };
+
+  return (
+    <View style={styles.permissionsContainer}>
+      <Text style={styles.permissionsText}>
+        Camera access is required to scan barcodes
+      </Text>
+      <TouchableOpacity onPress={openSettings} style={styles.settingsButton}>
+        <Text style={styles.settingsButtonText}>Open Settings</Text>
+      </TouchableOpacity>
+    </View>
+  );
+};
 
 const CameraPreview = ({
   onBarcodeScanned,
@@ -60,11 +78,7 @@ const CameraPreview = ({
   };
 
   if (!permissions || !permissions.granted) {
-    return (
-      <View>
-        <ActivityIndicator />
-      </View>
-    );
+    return <PermissionsRequired />;
   }
 
   return (
@@ -148,5 +162,29 @@ const styles = StyleSheet.create({
   overlay: {
     flex: 1,
     backgroundColor: "rgba(0,0,0,0.7)",
+  },
+  permissionsContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 20,
+    backgroundColor: "black",
+  },
+  permissionsText: {
+    color: "white",
+    fontSize: 16,
+    textAlign: "center",
+    marginBottom: 20,
+  },
+  settingsButton: {
+    backgroundColor: "white",
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 8,
+  },
+  settingsButtonText: {
+    color: "black",
+    fontSize: 16,
+    fontWeight: "600",
   },
 });

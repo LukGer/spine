@@ -2,9 +2,9 @@ import BooksListItem from "@/src/components/BooksListItem";
 import { useBooksQuery } from "@/src/repository/books";
 import * as AppleColors from "@bacons/apple-colors";
 import { LegendList } from "@legendapp/list";
-import { Stack } from "expo-router";
+import { SplashScreen, Stack } from "expo-router";
 import { SymbolView } from "expo-symbols";
-import React from "react";
+import React, { useEffect } from "react";
 import {
   ActivityIndicator,
   StyleSheet,
@@ -22,6 +22,10 @@ export default function HomePage() {
 
   const scrollRef = useAnimatedRef<Animated.ScrollView>();
   const scroll = useScrollViewOffset(scrollRef);
+
+  useEffect(() => {
+    SplashScreen.hide();
+  }, []);
 
   return (
     <>
