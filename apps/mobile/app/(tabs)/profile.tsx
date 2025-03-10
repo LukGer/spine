@@ -29,7 +29,13 @@ export default function ProfilePage() {
   });
 
   return (
-    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+    <View
+      style={{
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
       <Text>Profile</Text>
 
       <Button title="Add Book" onPress={() => mut.mutate()} />

@@ -1,15 +1,29 @@
-import { books, DbBook } from "@/src/db/schema";
+import { books, DbBook, ReadState } from "@/src/db/schema";
 import * as AppleColors from "@bacons/apple-colors";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { eq } from "drizzle-orm";
 import { Button, StyleSheet, Text, View } from "react-native";
 import { db } from "../db";
+import BookStateButton from "./BookStateButton";
 import Scene from "./Scene";
 
 const IMAGE_HEIGHT = 400;
 
 const BooksListItem = ({ book }: { book: DbBook }) => {
   const queryClient = useQueryClient();
+
+  const changeBookStateMutation = useMutation({
+    mutationFn: (state: ReadState) => {
+      return db
+        .update(books)
+        .set({ state })
+        .where(eq(books.id, book.id))
+        .execute();
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["books"], exact: true });
+    },
+  });
 
   const removeBookMutation = useMutation({
     mutationFn: async (id: number) => {
@@ -21,9 +35,19 @@ const BooksListItem = ({ book }: { book: DbBook }) => {
   });
 
   return (
-    <View key={book.isbn} style={styles.container}>
+    <View key={book.isbn} className="flex flex-col gap-1">
       <Scene coverUrl={book.thumbnailUrl ?? ""} />
-      <Text style={styles.title}>{book.title}</Text>
+
+      <View className="flex flex-row items-center gap-4">
+        <BookStateButton
+          state={book.state}
+          onStateChange={(state) => {
+            changeBookStateMutation.mutate(state);
+          }}
+        />
+
+        <Text style={styles.title}>{book.title}</Text>
+      </View>
 
       <Text style={styles.authors}>{book.authors}</Text>
 

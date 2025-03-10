@@ -1,8 +1,11 @@
+import "../global.css";
+
 import migrations from "@/drizzle/migrations";
 import { db } from "@/src/db";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useMigrations } from "drizzle-orm/expo-sqlite/migrator";
 import { SplashScreen, Stack } from "expo-router";
+import { verifyInstallation } from "nativewind";
 import { Text, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
@@ -12,6 +15,8 @@ SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const { success, error } = useMigrations(db, migrations);
+
+  verifyInstallation();
 
   if (!success) {
     return (

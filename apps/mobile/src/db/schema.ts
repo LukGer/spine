@@ -1,6 +1,10 @@
 import { relations } from "drizzle-orm";
 import { int, real, sqliteTable, text } from "drizzle-orm/sqlite-core";
 
+export const ReadStates = ["to_read", "reading", "read"] as const;
+
+export type ReadState = (typeof ReadStates)[number];
+
 export const books = sqliteTable("books", {
   id: int().primaryKey({ autoIncrement: true }),
   title: text().notNull(),
@@ -14,7 +18,7 @@ export const books = sqliteTable("books", {
   mainCategory: text(),
   averageRating: real(),
   thumbnailUrl: text(),
-  state: text({ enum: ["to_read", "reading", "read"] }).notNull(),
+  state: text({ enum: ReadStates }).notNull(),
 });
 
 export type DbBook = typeof books.$inferSelect;

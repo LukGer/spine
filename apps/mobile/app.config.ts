@@ -82,6 +82,9 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     },
     icon: getAppIcons(),
   },
+  web: {
+    bundler: "metro",
+  },
   plugins: [
     "expo-router",
     [

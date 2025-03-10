@@ -2,8 +2,7 @@ import { rubberBand } from "@/src/utils";
 import { Gltf } from "@react-three/drei/native";
 import { Canvas, useFrame, useLoader } from "@react-three/fiber/native";
 import { TextureLoader, THREE } from "expo-three";
-import { FastAverageColor } from "fast-average-color";
-import React, { Suspense, useEffect, useRef } from "react";
+import React, { Suspense, useRef } from "react";
 import { View } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import {
@@ -22,27 +21,8 @@ const BookModel = ({
 }) => {
   const texture = useLoader(TextureLoader, coverUrl);
 
-  const [dominantColor, setDominantColor] = React.useState<string | null>(null);
-
   const width = texture.image?.width ?? 1;
   const height = texture.image?.height ?? 1;
-
-  useEffect(() => {
-    const fac = new FastAverageColor();
-
-    async function loadImageData() {
-      const color = await fac.getColorAsync(coverUrl);
-      setDominantColor(color.hex);
-
-      console.log("DOMINANT COLOR: ", color.hex);
-    }
-
-    loadImageData();
-
-    return () => {
-      fac.destroy();
-    };
-  }, [coverUrl, height, width]);
 
   const meshRef = useRef<THREE.Group>(null);
 
