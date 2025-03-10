@@ -3,21 +3,12 @@ import * as AppleColors from "@bacons/apple-colors";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { eq } from "drizzle-orm";
 import { Button, StyleSheet, Text, View } from "react-native";
-import { SharedValue } from "react-native-reanimated";
 import { db } from "../db";
 import Scene from "./Scene";
 
 const IMAGE_HEIGHT = 400;
 
-const BooksListItem = ({
-  book,
-  scroll,
-  index,
-}: {
-  book: DbBook;
-  scroll: SharedValue<number>;
-  index: number;
-}) => {
+const BooksListItem = ({ book }: { book: DbBook }) => {
   const queryClient = useQueryClient();
 
   const removeBookMutation = useMutation({
@@ -31,7 +22,7 @@ const BooksListItem = ({
 
   return (
     <View key={book.isbn} style={styles.container}>
-      <Scene scroll={scroll} coverUrl={book.thumbnailUrl ?? ""} index={index} />
+      <Scene coverUrl={book.thumbnailUrl ?? ""} />
       <Text style={styles.title}>{book.title}</Text>
 
       <Text style={styles.authors}>{book.authors}</Text>

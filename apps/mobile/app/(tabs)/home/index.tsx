@@ -4,27 +4,24 @@ import * as AppleColors from "@bacons/apple-colors";
 import { LegendList } from "@legendapp/list";
 import { SplashScreen, Stack } from "expo-router";
 import { SymbolView } from "expo-symbols";
-import React, { useEffect } from "react";
+import React, { useCallback } from "react";
 import {
   ActivityIndicator,
+  Appearance,
+  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
-import Animated, {
-  useAnimatedRef,
-  useScrollViewOffset,
-} from "react-native-reanimated";
 
 export default function HomePage() {
   const query = useBooksQuery();
 
-  const scrollRef = useAnimatedRef<Animated.ScrollView>();
-  const scroll = useScrollViewOffset(scrollRef);
-
-  useEffect(() => {
+  const onLayout = useCallback(() => {
     SplashScreen.hide();
+
+    Appearance.setColorScheme("light");
   }, []);
 
   return (
@@ -48,8 +45,8 @@ export default function HomePage() {
           ),
         }}
       />
-      <Animated.ScrollView
-        ref={scrollRef}
+      <ScrollView
+        onLayout={onLayout}
         contentInsetAdjustmentBehavior="automatic"
         style={{ paddingHorizontal: 16, paddingTop: 16 }}
       >
@@ -62,9 +59,7 @@ export default function HomePage() {
             style={{ paddingBottom: 72 }}
             data={query.data}
             keyExtractor={(item) => item.id.toString()}
-            renderItem={({ item, index }) => (
-              <BooksListItem scroll={scroll} book={item} index={index} />
-            )}
+            renderItem={({ item }) => <BooksListItem book={item} />}
             estimatedItemSize={506}
             scrollEnabled={false}
             ItemSeparatorComponent={() => <View style={styles.listSeperator} />}
@@ -72,7 +67,7 @@ export default function HomePage() {
         )}
 
         {query.isSuccess && query.data.length === 0 && <EmptyState />}
-      </Animated.ScrollView>
+      </ScrollView>
     </>
   );
 }
