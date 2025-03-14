@@ -16,6 +16,7 @@ import {
 } from "react-native";
 import { db } from "../db";
 import { useBookByIsbnQuery } from "../repository/books";
+import { downloadAndSaveImage } from "../utils";
 
 const IMAGE_HEIGHT = 400;
 
@@ -33,6 +34,15 @@ const AddBooksListItem = ({ book }: { book: BookResponse }) => {
       operation: "add" | "remove";
     }) => {
       if (operation === "add") {
+        const localImageUri = await downloadAndSaveImage(
+          book.coverImageUrl,
+          book.isbn
+        );
+
+        if (!localImageUri) {
+          throw new Error("Failed to download image");
+        }
+
         await db
           .insert(books)
           .values({
@@ -43,7 +53,7 @@ const AddBooksListItem = ({ book }: { book: BookResponse }) => {
             publishedDate: book.publishedDate,
             description: book.description,
             pageCount: book.pageCount,
-            thumbnailUrl: book.coverImageUrl,
+            thumbnailUrl: localImageUri,
             state: "to_read",
           })
           .execute();

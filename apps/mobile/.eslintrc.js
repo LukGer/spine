@@ -5,5 +5,6 @@ module.exports = {
   ignorePatterns: ["/dist/*", "/node_modules/*", "/ios/*"],
   rules: {
     "import/no-unresolved": "off",
+    "react/no-unknown-property": "off",
   },
 };

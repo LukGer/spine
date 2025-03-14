@@ -23,7 +23,7 @@ export const query: AppRouteHandler<QueryRoute> = async (c) => {
   const { q: query, isbn, lang } = c.req.valid("query");
 
   if (!query && !isbn) {
-    return c.json([]);
+    throw new Error("No query or ISBN provided");
   }
 
   const normalizedIsbn = isbn ? normalizeIsbn(isbn) : undefined;
@@ -45,7 +45,18 @@ export const query: AppRouteHandler<QueryRoute> = async (c) => {
       continue;
     }
 
-    const coverImageUrl = `https://books.google.com/books/content?id=${item.id}&printsec=frontcover&img=1&zoom=2`;
+    const isbn = data?.volumeInfo.industryIdentifiers?.find(
+      (identifier) => identifier.type === "ISBN_13"
+    )?.identifier;
+
+    if (!isbn) {
+      console.error("No ISBN found");
+      continue;
+    }
+
+    const coverImageResponse = await fetch(
+      `https://bookcover.longitood.com/bookcover/${isbn}`
+    ).then((res) => res.json());
 
     books.push({
       title: data.volumeInfo.title,
@@ -53,13 +64,13 @@ export const query: AppRouteHandler<QueryRoute> = async (c) => {
       publisher: data.volumeInfo.publisher,
       publishedDate: data.volumeInfo.publishedDate,
       description: data.volumeInfo.description,
-      isbn: data.volumeInfo.industryIdentifiers[0]!.identifier,
+      isbn,
       pageCount: data.volumeInfo.pageCount,
       categories: data.volumeInfo.categories,
       averageRating: data.volumeInfo.averageRating,
       ratingsCount: data.volumeInfo.ratingsCount,
       language: data.volumeInfo.language,
-      coverImageUrl,
+      coverImageUrl: coverImageResponse.url,
     });
   }
 

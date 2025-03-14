@@ -70,7 +70,6 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   slug: "spine",
   version: "1.0.0",
   orientation: "portrait",
-  icon: "./assets/images/icon.png",
   scheme: getAppScheme(),
   userInterfaceStyle: "light",
   newArchEnabled: true,

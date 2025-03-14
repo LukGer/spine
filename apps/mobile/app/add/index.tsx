@@ -3,7 +3,6 @@ import AddBooksListItem from "@/src/components/AddBooksListItem";
 import CameraPreview from "@/src/components/CameraPreview";
 import * as Form from "@/src/components/ui/Form";
 import * as AppleColors from "@bacons/apple-colors";
-import { LegendList } from "@legendapp/list";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Stack, useFocusEffect, useNavigation } from "expo-router";
 import { SymbolView } from "expo-symbols";
@@ -11,6 +10,7 @@ import { useCallback, useState } from "react";
 import {
   ActivityIndicator,
   Button,
+  FlatList,
   Modal,
   StyleSheet,
   Text,
@@ -29,15 +29,19 @@ export default function AddPage() {
   const searchQuery = useQuery({
     queryKey: ["books", "search"],
     queryFn: async () => {
-      const books = await client.books.query
-        .$get({
-          query: {
-            q: text.length > 0 ? text : undefined,
-            isbn: isbn.length > 0 ? isbn : undefined,
-            lang: "de",
-          },
-        })
-        .then((response) => response.json());
+      const response = await client.books.query.$get({
+        query: {
+          q: text.length > 0 ? text : undefined,
+          isbn: isbn.length > 0 ? isbn : undefined,
+          lang: "de",
+        },
+      });
+
+      if (!response) {
+        throw new Error("No books found");
+      }
+
+      const books = await response.json();
 
       return books;
     },
@@ -140,12 +144,12 @@ export default function AddPage() {
             )}
 
             {searchQuery.data && (
-              <LegendList
+              <FlatList
+                scrollEnabled={false}
                 style={{ width: "100%", paddingBottom: 60 }}
                 data={searchQuery.data}
                 renderItem={({ item }) => <AddBooksListItem book={item} />}
                 keyExtractor={(item) => item.isbn}
-                estimatedItemSize={456}
                 ItemSeparatorComponent={() => (
                   <View style={styles.listSeperator} />
                 )}
@@ -170,6 +174,7 @@ export default function AddPage() {
             )}
           </View>
         </Form.List>
+
         <Modal
           animationType="slide"
           visible={showCamera}
